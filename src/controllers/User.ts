@@ -81,17 +81,59 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
 }
 
 export const updateUser = async (req: Request, res: Response) => {
-    try {
-        
-    } catch (error) {
-        errorHandler(error, req, res);
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    ).select("-password");
+
+    if (user === null) {
+      res.status(404).json({
+        status: "error",
+        message: "Usuario no encontrado"
+      });
+
+      return;
     }
-}
+
+    res.status(200).json({
+      status: "success",
+      message: "Usuario actualizado con éxito",
+      data: {
+        user
+      }
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
 
 export const deleteUser = async (req: Request, res: Response) => {
-    try {
-        
-    } catch (error) {
-        errorHandler(error, req, res);
+  try {
+    const { id } = req.params
+
+    const user = await User.findByIdAndDelete(id)
+
+    if (user === null) {
+      res.status(404).json({
+        status: "error",
+        message: "Usuario no encontrado"
+      })
+
+      return
     }
+
+    res.status(200).json({
+      status: "success",
+      message: "Usuario eliminado con éxito"
+    })
+  } catch (error) {
+    errorHandler(error, req, res)
+  }
 }

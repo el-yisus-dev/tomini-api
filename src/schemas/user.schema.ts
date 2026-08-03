@@ -21,3 +21,27 @@ export const createUserSchema = z.object({
     .string({ error: "La contraseña es requerida" })
     .min(8, { error: "La contraseña debe tener almenos 8 caracteres" }),
 }).strict()
+
+export const updateUserSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, { error: "El nombre debe ser más largo" })
+    .optional(),
+
+  lastname: z
+    .string()
+    .trim()
+    .min(1, { error: "El apellido debe ser más largo" })
+    .optional(),
+
+  username: z
+    .string()
+    .trim()
+    .min(1, { error: "El nombre de usuario debe ser más largo" })
+    .optional(),
+
+  email: z
+    .email({ error: "El email debe ser válido" })
+    .optional()
+}).strict();

@@ -1,5 +1,6 @@
 import express, { type Router, type Express} from 'express'
 
+import AuthRouter from "./Auth.js";
 import UserRouter from "./User.js";
 
 const routerAPI = (app: Express) => {
@@ -17,6 +18,7 @@ const routerAPI = (app: Express) => {
 
     app.use("/api/v1", router);
     
+    router.use("/auth", AuthRouter);
     router.use("/users", UserRouter);
 }
 

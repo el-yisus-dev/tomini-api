@@ -1,10 +1,13 @@
-import { Schema, model } from 'mongoose';
-import { type IUser, type ICreateUser, UserRole } from '../types/User.js';
+import { Model, Schema, model, type HydratedDocument } from "mongoose";
+import bcrypt from "bcrypt";
 
-interface IUserDocument extends IUser, Omit<ICreateUser, 'username' | 'email'>, Document {}
+import { type IUser, type IUserMethods, UserRole } from "../types/User.js";
 
-const userSchema = new Schema<IUserDocument>({
-    name: { 
+export type UserDocument = HydratedDocument<IUser>;
+
+const userSchema = new Schema<IUser, Model<IUser, {}, IUserMethods>>(
+    {
+        name: { 
         type: String, 
         required: [true, "El nombre es requerido"], 
         trim: true 
@@ -53,4 +56,20 @@ const userSchema = new Schema<IUserDocument>({
     versionKey: false
 });
 
-export const User = model<IUserDocument>('User', userSchema);
+
+userSchema.pre("save", async function (this: UserDocument) {
+  if (!this.isModified("password")) {
+    return;
+  }
+
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
+userSchema.methods.comparePassword = async function (
+  password: string
+) {
+  return bcrypt.compare(password, this.password);
+};
+
+
+export const User = model<IUser>("User", userSchema);

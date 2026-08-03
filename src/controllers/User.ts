@@ -60,7 +60,6 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     const [users, totalUsers] = await Promise.all([
       User
         .find()
-        .select("-password")
         .skip(skip)
         .limit(limit)
         .sort({ updatedAt: -1 })
@@ -105,9 +104,6 @@ export const updateUser = async (req: Request, res: Response) => {
     res.status(200).json({
       status: "success",
       message: "Usuario actualizado con éxito",
-      data: {
-        user
-      }
     });
   } catch (error) {
     errorHandler(error, req, res);

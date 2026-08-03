@@ -1,24 +1,23 @@
-import { Types } from 'mongoose';
+// interfaces/user.interface.ts
 
-export enum UserRole{
-    ADMIN = 'admin',
-    USER = 'user'
+export enum UserRole {
+  ADMIN = "admin",
+  USER = "user"
 }
-// Interfaz principal de usuario
+
 export interface IUser {
-    id?: string;
-    username: string;
-    lastname: string;
-    name: string;
-    email: string;
-    enabled: boolean;
-    isVerified: boolean;
-    role: UserRole;
-    createAt: Date;
+  username: string;
+  lastname: string;
+  name: string;
+  email: string;
+  password: string;
+  enabled: boolean;
+  isVerified: boolean;
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
 }
-// Interfaz para crear un usuario
-export interface ICreateUser {
-    username: string;
-    email: string;
-    password: string;
+
+export interface IUserMethods {
+  comparePassword(password: string): Promise<boolean>;
 }

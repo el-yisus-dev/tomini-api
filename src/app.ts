@@ -20,12 +20,10 @@ app.use(cors());
 // Config middleware to response json
 app.use(express.json());
 
-
 // Adding the main router
 routerAPI(app);
 
 //Error handler middleware
 app.use(errorHandler)
-
 
 export default app;

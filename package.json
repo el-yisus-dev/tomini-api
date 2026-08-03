@@ -1,0 +1,42 @@
+{
+  "name": "tomini-api",
+  "version": "1.0.0",
+  "description": "The API about tomini POS",
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "homepage": "https://github.com/el-yisus-dev/tomini-api#readme",
+  "bugs": {
+    "url": "https://github.com/el-yisus-dev/tomini-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/el-yisus-dev/tomini-api.git"
+  },
+  "license": "ISC",
+  "author": "el yisus dev",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.9.1",
+    "morgan": "^1.11.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^26.1.2",
+    "tsx": "^4.23.5",
+    "typescript": "^7.0.2"
+  }
+}

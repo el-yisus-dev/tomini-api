@@ -2,6 +2,7 @@ import express, { type Router, type Express} from 'express'
 
 import AuthRouter from "./Auth.js";
 import CategoriesRouter from "./Category.js";
+import ProductsRouter from "./Product.js";
 import UserRouter from "./User.js";
 import StoreRouter from "./Store.js";
 
@@ -22,6 +23,7 @@ const routerAPI = (app: Express) => {
     
     router.use("/auth", AuthRouter);
     router.use("/categories", CategoriesRouter);
+    router.use("/products", ProductsRouter);
     router.use("/store", StoreRouter);
     router.use("/users", UserRouter);
 }

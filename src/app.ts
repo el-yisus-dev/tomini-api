@@ -9,7 +9,7 @@ import { errorHandler } from "./middleware/Error.js";
 const app: Express = express();
 
 // connect to db
-void connectToMongoDB();
+await connectToMongoDB();
 
 // Config morgan middleware to add logs
 app.use(morgan("dev"));

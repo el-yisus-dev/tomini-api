@@ -12,8 +12,19 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: 1234
       MONGO_INITDB_DATABASE: tomini_pos
 
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/etc/mongodb-keyfile"
+      ]
+
     volumes:
       - mongodb_data:/data/db
+      - ./docker/mongodb/mongodb-keyfile:/etc/mongodb-keyfile:ro
 
 volumes:
   mongodb_data:

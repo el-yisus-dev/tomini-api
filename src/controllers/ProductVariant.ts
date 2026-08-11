@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
+import mongoose from "mongoose";
+
 import { Product } from "../models/Product.js";
 import { ProductVariant } from "../models/ProductVariant.js";
-import { Store } from "../models/Store.js";
 import { errorHandler } from "../middleware/Error.js";
 import { getPagination, getTotalPages } from "../utils/pagination.js";
+import { Inventory } from "../models/Inventory.js";
 
 export const createProductVariant = async (
     req: Request,
@@ -59,6 +61,13 @@ export const createProductVariant = async (
             minStock,
             unit,
             quantity
+        });
+
+        await Inventory.create({
+            store: product.store._id,
+            productVariant: variant._id,
+            stock: 0,
+            isActive: true
         });
 
         res.status(201).json({

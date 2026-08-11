@@ -61,6 +61,7 @@ export const me = async (req: Request, res: Response): Promise<void> => {
     const { user }= res.locals;
     
     const userData = await User.findById(user.id).select("-password");
+    const storeDAta = await Store
 
     if (userData === null) {
       res.status(404).json({

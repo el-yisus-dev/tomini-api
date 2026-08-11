@@ -1,7 +1,9 @@
 import express, { type Router, type Express} from 'express'
 
 import AuthRouter from "./Auth.js";
+import CashRegisterRouter from "./CashRegister.js";
 import CategoriesRouter from "./Category.js";
+import InventoryRouter from "./Inventory.js";
 import ProductsRouter from "./Product.js";
 import UserRouter from "./User.js";
 import StoreRouter from "./Store.js";
@@ -22,7 +24,9 @@ const routerAPI = (app: Express) => {
     app.use("/api/v1", router);
     
     router.use("/auth", AuthRouter);
+    router.use("/cash-registers", CashRegisterRouter);
     router.use("/categories", CategoriesRouter);
+    router.use("/inventory", InventoryRouter);
     router.use("/products", ProductsRouter);
     router.use("/store", StoreRouter);
     router.use("/users", UserRouter);

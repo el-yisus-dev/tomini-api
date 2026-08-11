@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import { User } from "../models/User.js";
 import { errorHandler } from "../middleware/Error.js";
 import { generateToken } from "../utils/jwt.js";
+import { Store } from "../models/Store.js";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -61,7 +62,7 @@ export const me = async (req: Request, res: Response): Promise<void> => {
     const { user }= res.locals;
     
     const userData = await User.findById(user.id).select("-password");
-    const storeDAta = await Store
+    const storeData = await Store.find({ owner: user.id });
 
     if (userData === null) {
       res.status(404).json({
@@ -72,10 +73,20 @@ export const me = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    if (storeData === null) {
+      res.status(404).json({
+        status: "error",
+        message: "Tienda no encontrado"
+      });
+
+      return;
+    }
+
     res.status(200).json({
       status: "success",
       data: {
-        userData
+        user: userData,
+        store: storeData
       }
     });
   } catch (error) {

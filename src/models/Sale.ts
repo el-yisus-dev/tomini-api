@@ -52,7 +52,7 @@ const saleItemSchema = new Schema<ISaleItem>(
                 "La cantidad es obligatoria"
             ],
             min: [
-                1,
+                0.01,
                 "La cantidad debe ser mayor a 0"
             ]
         },

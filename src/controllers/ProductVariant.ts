@@ -67,7 +67,6 @@ export const createProductVariant = async (
             store: product.store._id,
             productVariant: variant._id,
             stock: 0,
-            isActive: true
         });
 
         res.status(201).json({

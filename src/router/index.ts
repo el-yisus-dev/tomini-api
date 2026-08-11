@@ -5,6 +5,7 @@ import CashRegisterRouter from "./CashRegister.js";
 import CategoriesRouter from "./Category.js";
 import InventoryRouter from "./Inventory.js";
 import ProductsRouter from "./Product.js";
+import SaleRouter from "./Sale.js";
 import UserRouter from "./User.js";
 import StoreRouter from "./Store.js";
 
@@ -28,6 +29,7 @@ const routerAPI = (app: Express) => {
     router.use("/categories", CategoriesRouter);
     router.use("/inventory", InventoryRouter);
     router.use("/products", ProductsRouter);
+    router.use("/sales", SaleRouter);
     router.use("/store", StoreRouter);
     router.use("/users", UserRouter);
 }

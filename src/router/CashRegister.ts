@@ -16,8 +16,8 @@ import {
 } from "../schemas/cashRegister.schema.js";
 
 import { UserRole } from "../types/User.js";
-import { createCashMovement } from "../controllers/CashMovement.js";
-import { createCashMovementSchema } from "../schemas/CashMovement.schema.js";
+import { createCashMovement, getAllCashierTransactions } from "../controllers/CashMovement.js";
+import { createCashMovementSchema } from "../schemas/cashMovement.schema.js";
 
 const router = Router();
 
@@ -46,6 +46,11 @@ router.post(
     "/movements",
     validate(createCashMovementSchema),
     createCashMovement
+);
+
+router.get(
+    "/transactions",
+    getAllCashierTransactions
 );
 
 export default router;

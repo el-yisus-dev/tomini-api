@@ -5,7 +5,8 @@ export enum InventoryMovementType {
     SALE = "SALE",
     ADJUSTMENT = "ADJUSTMENT",
     DAMAGE = "DAMAGE",
-    RETURN = "RETURN"
+    RETURN = "RETURN",
+    CANCELLATION = "CANCELLATION"
 }
 
 export interface IInventoryMovement {

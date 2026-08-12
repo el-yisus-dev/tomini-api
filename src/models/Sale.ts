@@ -127,7 +127,8 @@ const saleSchema = new Schema<ISale>(
             validate: {
                 validator: (items: ISaleItem[]) =>
                     items.length > 0,
-                message: "La venta debe contener al menos un producto"
+                message:
+                    "La venta debe contener al menos un producto"
             }
         },
 
@@ -172,7 +173,8 @@ const saleSchema = new Schema<ISale>(
             type: String,
             enum: {
                 values: Object.values(PaymentMethod),
-                message: "El método de pago no es válido"
+                message:
+                    "El método de pago no es válido"
             },
             required: [
                 true,
@@ -208,7 +210,8 @@ const saleSchema = new Schema<ISale>(
             type: String,
             enum: {
                 values: Object.values(SaleStatus),
-                message: "El estado de la venta no es válido"
+                message:
+                    "El estado de la venta no es válido"
             },
             default: SaleStatus.COMPLETED,
             required: [
@@ -219,7 +222,8 @@ const saleSchema = new Schema<ISale>(
         }
     },
     {
-        timestamps: true
+        timestamps: true,
+        versionKey: false
     }
 );
 
@@ -229,7 +233,18 @@ saleSchema.index({
 });
 
 saleSchema.index({
+    store: 1,
+    status: 1,
+    createdAt: -1
+});
+
+saleSchema.index({
     cashRegister: 1,
+    createdAt: -1
+});
+
+saleSchema.index({
+    cashier: 1,
     createdAt: -1
 });
 

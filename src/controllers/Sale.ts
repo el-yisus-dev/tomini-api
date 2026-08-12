@@ -10,12 +10,10 @@ import { InventoryMovement } from "../models/InventoryMovement.js";
 import { CashRegister } from "../models/CashRegister.js";
 import { CashMovement } from "../models/CashMovement.js";
 
-
 import {
     getPagination,
     getTotalPages
 } from "../utils/pagination.js";
-
 
 import {
     PaymentMethod,
@@ -105,7 +103,28 @@ export const createSale = async (
             }
 
             /*
-             * 4. Evitar variantes repetidas
+             * 4. Validar cantidades
+             */
+
+            const invalidQuantity = items.find(
+                (item: {
+                    productVariant: string;
+                    quantity: number;
+                }) =>
+                    typeof item.quantity !== "number" ||
+                    !Number.isFinite(item.quantity) ||
+                    item.quantity <= 0
+            );
+
+            if (invalidQuantity) {
+                businessError =
+                    "La cantidad de cada producto debe ser mayor a 0";
+
+                return;
+            }
+
+            /*
+             * 5. Evitar variantes repetidas
              */
 
             const variantIds = items.map(
@@ -130,7 +149,7 @@ export const createSale = async (
             }
 
             /*
-             * 5. Obtener variantes
+             * 6. Obtener variantes
              */
 
             const variants = await ProductVariant
@@ -154,7 +173,7 @@ export const createSale = async (
             }
 
             /*
-             * 6. Obtener productos
+             * 7. Obtener productos
              */
 
             const productIds = variants.map(
@@ -181,7 +200,7 @@ export const createSale = async (
             );
 
             /*
-             * 7. Verificar que todas las variantes
+             * 8. Verificar que todas las variantes
              * pertenezcan a productos válidos
              */
 
@@ -200,7 +219,7 @@ export const createSale = async (
             }
 
             /*
-             * 8. Obtener inventarios
+             * 9. Obtener inventarios
              */
 
             const inventories = await Inventory
@@ -220,7 +239,7 @@ export const createSale = async (
             );
 
             /*
-             * 9. Validar inventarios
+             * 10. Validar inventarios
              */
 
             const missingInventory = variantIds.find(
@@ -236,7 +255,45 @@ export const createSale = async (
             }
 
             /*
-             * 10. Construir items y validar stock
+             * 11. Validar stock
+             */
+
+            const insufficientStockItem =
+                items.find(item => {
+
+                    const inventory =
+                        inventoryMap.get(
+                            item.productVariant
+                        );
+
+                    return (
+                        inventory &&
+                        inventory.stock < item.quantity
+                    );
+                });
+
+            if (insufficientStockItem) {
+
+                const variant =
+                    variants.find(
+                        currentVariant =>
+                            currentVariant._id.toString() ===
+                            insufficientStockItem.productVariant
+                    );
+
+                const inventory =
+                    inventoryMap.get(
+                        insufficientStockItem.productVariant
+                    );
+
+                businessError =
+                    `Stock insuficiente para "${variant?.name ?? "producto"}". Disponible: ${inventory?.stock ?? 0}, solicitado: ${insufficientStockItem.quantity}`;
+
+                return;
+            }
+
+            /*
+             * 12. Construir items
              */
 
             const saleItems = items.map(
@@ -269,13 +326,6 @@ export const createSale = async (
                         );
 
                     if (!inventory) {
-                        return null;
-                    }
-
-                    if (
-                        inventory.stock <
-                        item.quantity
-                    ) {
                         return null;
                     }
 
@@ -312,27 +362,6 @@ export const createSale = async (
             );
 
             /*
-             * 11. Identificar errores específicos
-             */
-
-            const invalidItem =
-                saleItems.find(
-                    item => item === null
-                );
-
-            if (invalidItem === null) {
-                const invalidItemIndex =
-                    saleItems.findIndex(
-                        item => item === null
-                    );
-
-                businessError =
-                    `El producto de la posición ${invalidItemIndex + 1} no es válido`;
-
-                return;
-            }
-
-            /*
              * TypeScript puede tratar los items
              * como válidos después de la validación.
              */
@@ -341,44 +370,6 @@ export const createSale = async (
                 saleItems as NonNullable<
                     typeof saleItems[number]
                 >[];
-
-            /*
-             * 12. Validar stock insuficiente
-             */
-
-            const insufficientStockItem =
-                items.find(item => {
-
-                    const inventory =
-                        inventoryMap.get(
-                            item.productVariant
-                        );
-
-                    return (
-                        inventory &&
-                        inventory.stock < item.quantity
-                    );
-                });
-
-            if (insufficientStockItem) {
-
-                const variant =
-                    variants.find(
-                        currentVariant =>
-                            currentVariant._id.toString() ===
-                            insufficientStockItem.productVariant
-                    );
-
-                const inventory =
-                    inventoryMap.get(
-                        insufficientStockItem.productVariant
-                    );
-
-                businessError =
-                    `Stock insuficiente para "${variant?.name ?? "producto"}". Disponible: ${inventory?.stock ?? 0}, solicitado: ${insufficientStockItem.quantity}`;
-
-                return;
-            }
 
             /*
              * 13. Calcular subtotal

@@ -16,32 +16,66 @@ export const getDashboard = async (
     req: Request,
     res: Response
 ) => {
-    try {
-        const owner = res.locals.user._id;
 
-        const store = await Store.findOne({
-            owner,
-            isActive: true
-        })
-            .select("_id name")
-            .lean();
+    try {
+
+        const owner =
+            res.locals.user._id;
+
+        /*
+         * Obtener la tienda activa
+         */
+
+        const store =
+            await Store
+                .findOne({
+                    owner,
+                    isActive: true
+                })
+                .select("_id name")
+                .lean();
 
         if (!store) {
+
             res.status(404).json({
                 status: "error",
-                message: "No se encontró una tienda"
+                message:
+                    "No se encontró una tienda"
             });
 
             return;
         }
 
-        const storeId = store._id;
+        const storeId =
+            store._id;
 
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
+        /*
+         * Obtener rango del día actual
+         */
 
-        const endOfDay = new Date();
-        endOfDay.setHours(23, 59, 59, 999);
+        const startOfDay =
+            new Date();
+
+        startOfDay.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        const endOfDay =
+            new Date();
+
+        endOfDay.setHours(
+            23,
+            59,
+            59,
+            999
+        );
+
+        /*
+         * Obtener información del dashboard
+         */
 
         const [
             summary,
@@ -51,39 +85,61 @@ export const getDashboard = async (
             recentInventoryMovements,
             lowStock
         ] = await Promise.all([
+
             getSummary(
                 storeId,
                 startOfDay,
                 endOfDay
             ),
 
-            getCashRegister(storeId),
+            getCashRegister(
+                storeId
+            ),
 
             getQuickSell(
                 storeId,
                 owner
             ),
 
-            getRecentSales(storeId),
+            getRecentSales(
+                storeId
+            ),
 
-            getRecentInventoryMovements(storeId),
+            getRecentInventoryMovements(
+                storeId
+            ),
 
-            getLowStock(storeId)
+            getLowStock(
+                storeId
+            )
         ]);
 
         res.status(200).json({
+
             status: "success",
+
             data: {
+
                 summary,
+
                 cashRegister,
+
                 quickSell,
+
                 recentSales,
+
                 recentInventoryMovements,
+
                 lowStock
             }
         });
+
     } catch (error) {
-        errorHandler(error, req, res);
+
+        errorHandler(
+            error,
+            req,
+            res
+        );
     }
 };
-

@@ -1,15 +1,15 @@
-/*
- * Summary
- */
 
 import { CashRegister } from "../models/CashRegister.js";
 import { Inventory } from "../models/Inventory.js";
 import { InventoryMovement } from "../models/InventoryMovement.js";
 import { Sale } from "../models/Sale.js";
+import { CashMovement } from "../models/CashMovement.js";
 
 import {
+    CashMovementType,
     CashRegisterStatus
 } from "../types/CashRegister.js";
+
 
 import {
     SaleStatus
@@ -170,19 +170,72 @@ export const getCashRegister = async (
         return null;
     }
 
+    const movements =
+        await CashMovement.aggregate([
+
+            {
+                $match: {
+                    store: storeId,
+
+                    cashRegister:
+                        cashRegister._id
+                }
+            },
+
+            {
+                $group: {
+                    _id: null,
+
+                    sales: {
+                        $sum: {
+                            $cond: [
+                                {
+                                    $eq: [
+                                        "$type",
+                                        CashMovementType.SALE
+                                    ]
+                                },
+                                "$amount",
+                                0
+                            ]
+                        }
+                    },
+
+                    refunds: {
+                        $sum: {
+                            $cond: [
+                                {
+                                    $eq: [
+                                        "$type",
+                                        CashMovementType.REFUND
+                                    ]
+                                },
+                                "$amount",
+                                0
+                            ]
+                        }
+                    }
+                }
+            }
+        ]);
+
+    const sales =
+        movements[0]?.sales ?? 0;
+
+    const refunds =
+        movements[0]?.refunds ?? 0;
+
+    const currentCash =
+        cashRegister.openingAmount +
+        sales -
+        refunds;
+
     return {
-
-        id:
-            cashRegister._id,
-
-        status:
-            cashRegister.status,
-
-        openingAmount:
-            cashRegister.openingAmount,
-
-        openedAt:
-            cashRegister.openedAt
+        id: cashRegister._id,
+        status: cashRegister.status,
+        openingAmount: cashRegister.openingAmount,
+        currentCash,
+        openedAt: cashRegister.openedAt
     };
 };
 

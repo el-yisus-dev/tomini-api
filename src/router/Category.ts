@@ -17,6 +17,8 @@ import {
 } from "../schemas/category.schema.js";
 
 import { objectIdSchema } from "../schemas/id.schema.js";
+import { verifyRole } from "../middleware/ACL.js";
+import { UserRole } from "../types/User.js";
 
 
 const router = Router();

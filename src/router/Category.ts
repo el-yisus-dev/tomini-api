@@ -23,19 +23,19 @@ const router = Router();
 
 router.use(protect);
 
-router.post("/", validate(createCategorySchema), createCategory);
+router.post("/", verifyRole([UserRole.ADMIN]), validate(createCategorySchema), createCategory);
 
 
 router.get("/", getAllCategories);
 
 
-router.get("/:id", validate(objectIdSchema, "params"), getCategoryById);
+router.get("/:id", verifyRole([UserRole.ADMIN]), validate(objectIdSchema, "params"), getCategoryById);
 
 
-router.patch("/:id", validate(objectIdSchema, "params"), validate(updateCategorySchema), updateCategory);
+router.patch("/:id", validate(objectIdSchema, "params"), verifyRole([UserRole.ADMIN]), validate(updateCategorySchema), updateCategory);
 
 
-router.delete("/:id", validate(objectIdSchema, "params"), deleteCategory);
+router.delete("/:id", validate(objectIdSchema, "params"), verifyRole([UserRole.ADMIN]), deleteCategory);
 
 
 export default router;
